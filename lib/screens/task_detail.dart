@@ -15,22 +15,17 @@ class TaskDetailScreen extends StatefulWidget {
 
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
   late Map<String, dynamic> task;
-  
+
   @override
   void initState() {
     super.initState();
     task = widget.task;
   }
 
-  Future<void> toggleTaskCompletion() async {
-    final taskId = task['id'];
+  // Função que atualiza o status de conclusão da tarefa
+  Future<void> _toggleTaskCompletion() async {
     final newStatus = !(task['is_completed'] ?? false);
-    final url = 'https://todo-list-d016d-default-rtdb.firebaseio.com/tasks/$taskId.json';
-    final response = await http.patch(
-      Uri.parse(url),
-      body: jsonEncode({'is_completed': newStatus}),
-      headers: {'Content-Type': 'application/json'},
-    );
+    final response = await _updateTaskStatus(newStatus);
 
     if (response.statusCode == 200) {
       setState(() {
@@ -43,10 +38,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
-  Future<void> deleteTask() async {
+  // Função para enviar o update da tarefa
+  Future<http.Response> _updateTaskStatus(bool newStatus) {
     final taskId = task['id'];
     final url = 'https://todo-list-d016d-default-rtdb.firebaseio.com/tasks/$taskId.json';
-    final response = await http.delete(Uri.parse(url));
+    return http.patch(
+      Uri.parse(url),
+      body: jsonEncode({'is_completed': newStatus}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+
+  // Função para excluir a tarefa
+  Future<void> _deleteTask() async {
+    final response = await _deleteTaskFromApi();
 
     if (response.statusCode == 200) {
       _showSnackbar('Tarefa excluída com sucesso!', Colors.green);
@@ -56,13 +61,22 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
+  // Função que deleta a tarefa no backend
+  Future<http.Response> _deleteTaskFromApi() {
+    final taskId = task['id'];
+    final url = 'https://todo-list-d016d-default-rtdb.firebaseio.com/tasks/$taskId.json';
+    return http.delete(Uri.parse(url));
+  }
+
+  // Função para exibir a mensagem no snackbar
   void _showSnackbar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: color),
     );
   }
 
-  Future<void> navigateToEditPage() async {
+  // Função para navegar para a tela de edição
+  Future<void> _navigateToEditPage() async {
     final updatedTask = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -78,28 +92,54 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
+  // Função para formatar a data de vencimento
+  String _formatDueDate(String? dueDate) {
+    if (dueDate == null) return 'Não definida';
+    
+    try {
+      DateTime parsedDate = DateTime.parse(dueDate);
+      return DateFormat('dd/MM/yyyy').format(parsedDate);  // Formatar data
+    } catch (e) {
+      return 'Data inválida';
+    }
+  }
+
+  // Função para confirmar a exclusão da tarefa
+  void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar exclusão'),
+        content: const Text('Tem certeza de que deseja excluir esta tarefa?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              _deleteTask();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Formatar a data de vencimento no formato dd/MM/yyyy
-    String formattedDate = '';
-    if (task['due_date'] != null) {
-      try {
-        DateTime dueDate = DateTime.parse(task['due_date']);
-        formattedDate = DateFormat('dd/MM/yyyy').format(dueDate);  // Formatar data
-      } catch (e) {
-        formattedDate = 'Data inválida';
-      }
-    } else {
-      formattedDate = 'Não definida';
-    }
+    final formattedDate = _formatDueDate(task['due_date']);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalhes da Tarefa'), centerTitle: true,
+        title: const Text('Detalhes da Tarefa'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: navigateToEditPage,
+            onPressed: _navigateToEditPage,
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
@@ -136,7 +176,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             const Spacer(),
             Center(
               child: ElevatedButton(
-                onPressed: toggleTaskCompletion,
+                onPressed: _toggleTaskCompletion,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: task['is_completed'] == true
                       ? Colors.orange
@@ -156,29 +196,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _confirmDelete(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmar exclusão'),
-        content: const Text('Tem certeza de que deseja excluir esta tarefa?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              deleteTask();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
-          ),
-        ],
       ),
     );
   }
