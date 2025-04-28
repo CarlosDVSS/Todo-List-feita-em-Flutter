@@ -43,10 +43,6 @@ lib/: Contains the main Dart code, including UI components, state management, an
 assets/: Stores images, fonts, or other static resources.
 pubspec.yaml: Manages dependencies and project configuration.
 
-Screenshots
-[Add screenshots here if available, e.g., via GitHub Issues or an images/ folder]
-Future Improvements
-
 Add cloud synchronization with Firebase.
 Implement task categories and priority levels.
 Support for dark mode and additional themes.
