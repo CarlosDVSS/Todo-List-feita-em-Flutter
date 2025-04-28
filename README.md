@@ -1,20 +1,62 @@
-<<<<<<< HEAD
-# todo_app
+Todo List App - Flutter
+A modern and user-friendly Todo List application built with Flutter, designed to help users manage tasks efficiently. This project showcases my skills in mobile app development, state management, and clean UI/UX design using Flutter and Dart.
+Features
 
-A new Flutter project.
+Create, edit, and delete tasks.
+Mark tasks as completed.
+Persistent storage to save tasks (using local storage).
+Responsive design compatible with Android, iOS, and web platforms.
+Clean and intuitive user interface.
 
-## Getting Started
+Technologies
 
-This project is a starting point for a Flutter application.
+Flutter: Cross-platform framework for building the app.
+Dart: Programming language used for Flutter development.
+Local Storage: For persisting tasks (e.g., SharedPreferences or Hive).
+State Management: [Provider/BLoC/GetX, adjust based on your implementation].
 
-A few resources to get you started if this is your first Flutter project:
+Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Flutter SDK (version 3.0.0 or higher)
+Dart SDK
+Android Studio or Visual Studio Code with Flutter extensions
+An emulator or physical device for testing
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Todo_app-Flutter-Firebase-
->>>>>>> 9da8afd0a923fabb859310c0e2ad0ba22c3a36c1
+How to Run
+
+Clone the repository:git clone https://github.com/CarlosDVSS/Todo-List-feita-em-Flutter.git
+
+
+Navigate to the project directory:cd Todo-List-feita-em-Flutter
+
+
+Install dependencies:flutter pub get
+
+
+Run the app:flutter run
+
+Ensure an emulator or device is connected.
+
+Project Structure
+
+lib/: Contains the main Dart code, including UI components, state management, and business logic.
+assets/: Stores images, fonts, or other static resources.
+pubspec.yaml: Manages dependencies and project configuration.
+
+Screenshots
+[Add screenshots here if available, e.g., via GitHub Issues or an images/ folder]
+Future Improvements
+
+Add cloud synchronization with Firebase.
+Implement task categories and priority levels.
+Support for dark mode and additional themes.
+
+Contributing
+Feel free to submit issues or pull requests. Contributions are welcome!
+Contact
+Carlos Junior  
+
+Email: morgantexugo@gmail.com  
+LinkedIn: linkedin.com/in/carlosjunior-57a935160  
+GitHub: github.com/CarlosDVSS
+
